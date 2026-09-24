@@ -5,52 +5,58 @@ This document records the key interactions, AI proposals, human engineering deci
 ---
 
 ### Entry 1: Requirements & Specification Definition (Fases 1 y 2)
+
 - **Stage**: Requirements & Specification (`REQUIREMENTS.md`, `SPEC.md`)
 - **Context / Prompt**:
-  The developer asked to establish complete functional and non-functional requirements for the Customer Search feature, allowing flexibility in criteria while strictly honoring the template and rules from the ADA-05 specification.
+  Le pedí a la IA estructurar los requerimientos funcionales y no funcionales para la funcionalidad de búsqueda de clientes (Customer Search). Establecí que debíamos permitir criterios flexibles pero apegándonos estrictamente al template y reglas de la especificación ADA-05.
 - **AI Proposal**:
-  The AI proposed a feature scope with 6 functional requirements (FR-01 to FR-06) covering case-insensitive partial search by name, email, unified query, validation rules (>= 2 chars), empty results handling, and alphabetical sorting. For non-functional requirements (NFR-01 to NFR-03), it proposed <100ms performance across 10k records, CLI usability with `--json` and standard exit codes, and zero third-party runtime dependencies.
+  La IA propuso un alcance inicial con 6 requerimientos funcionales (FR-01 a FR-06) para búsqueda parcial insensible a mayúsculas/minúsculas por nombre, correo y consulta unificada, además de reglas de validación (>= 2 caracteres), manejo de resultados vacíos y ordenamiento alfabético. Para los no funcionales, sugirió rendimiento menor a 100ms para 10k registros, usabilidad en CLI con `--json` y códigos de salida estándar, y cero dependencias de terceros en runtime.
 - **Human Decision / Adjustment**:
-  Accepted the requirement set. Clarified the handling of special characters (Q-01) by establishing explicit Unicode NFKD normalization so accents like "José" match "jose", and stipulated that seed data should default to a local JSON file (`data/customers.json`). Ensured that `SPEC.md` strictly referenced requirements by ID without duplicating their definitions.
+  Acepté el set de requerimientos y añadí consideraciones clave: definí el manejo de caracteres especiales (Q-01) implementando normalización Unicode NFKD (para que acentos como "José" coincidan con "jose") y establecí que los datos de prueba usen por defecto un archivo JSON local (`data/customers.json`). Además, aseguré que `SPEC.md` referenciara los requerimientos por ID sin duplicar definiciones.
 - **Impact on Product**:
-  Created well-defined, verifiable criteria and boundaries preventing scope creep before any code was written.
+  Se crearon criterios y límites verificables que previnieron el _scope creep_ antes de escribir código.
 
 ---
 
 ### Entry 2: Architectural Modeling and Layered Design (Fase 3)
+
 - **Stage**: Architecture (`ARCHITECTURE.md`)
 - **Context / Prompt**:
-  Designing the components, responsibilities, data flow, and interfaces for the Customer Search CLI tool.
+  Planteé a la IA el diseño de los componentes, responsabilidades, flujo de datos e interfaces para la herramienta CLI de búsqueda de clientes, evaluando si convenía un índice invertido (como SQLite FTS) frente a un escaneo lineal en memoria.
 - **AI Proposal**:
-  The AI suggested a clean layered architecture with a Domain Model (`Customer`, `SearchResult`), Repository Protocol (`CustomerRepository`), Service Layer (`CustomerSearchService`), and Presentation CLI (`cli.py`). It also evaluated whether to use an inverted index (or SQLite FTS) vs an in-memory linear scan.
+  La IA sugirió una arquitectura limpia por capas con un Modelo de Dominio (`Customer`, `SearchResult`), un Protocolo de Repositorio (`CustomerRepository`), Capa de Servicio (`CustomerSearchService`) y la Interfaz CLI (`cli.py`), evaluando las opciones de indexación.
 - **Human Decision / Adjustment**:
-  Opted for the in-memory linear scan with Unicode normalization. For datasets of up to 10,000 records, linear scanning executes in ~15ms, eliminating unnecessary dependency overhead and database synchronization bugs while keeping the project 100% compliant with standard library constraints (C-01).
+  Decidí optar por el escaneo lineal en memoria con normalización Unicode. Para conjuntos de hasta 10,000 registros, el escaneo lineal se ejecuta en ~15ms, lo que elimina complejidad innecesaria, evita problemas de sincronización con bases de datos y mantiene el proyecto 100% alineado con la restricción de cero dependencias (C-01).
 - **Impact on Product**:
-  Kept codebase lightweight, modular, testable with pure mocks/fixtures, and completely dependency-free.
+  Se mantuvo una base de código ligera, modular, fácil de probar con mocks puros y totalmente libre de dependencias externas.
 
 ---
 
 ### Entry 3: Domain Implementation & Validation Separation (Fases 4 y 7: T-02, T-03, T-04)
+
 - **Stage**: Implementation & Refactoring (`src/customer_search/`)
 - **Context / Prompt**:
-  Implement the domain entity, repository, search service, and validation logic according to tasks T-02, T-03, and T-04.
+  Le indiqué a la IA implementar la entidad de dominio, el repositorio, el servicio de búsqueda y la lógica de validación acorde a las tareas T-02, T-03 y T-04.
 - **AI Proposal**:
-  Initially, the AI implemented validation logic directly inside `service.py`. When testing serialization in `test_models.py`, Python's `round(1.2345, 3)` produced `1.234` due to banker's rounding (round half to even).
+  En su implementación inicial, la IA colocó la lógica de validación directamente dentro de `service.py`. Al probar la serialización en `test_models.py`, el redondeo nativo de Python (`round(1.2345, 3)`) generó un detalle por el redondeo bancario (_round half to even_).
 - **Human Decision / Adjustment**:
-  1. Decoupled validation into its own module (`src/customer_search/validation.py`) to adhere to the Single Responsibility Principle and allow independent unit testing of query boundary conditions (VR-01, VR-02, VR-03).
-  2. Fixed floating-point test assertions to use stable non-ambiguous representations (`1.25`).
+
+1. Decidí desacoplar la validación en su propio módulo (`src/customer_search/validation.py`) para cumplir con el Principio de Responsabilidad Única y permitir pruebas unitarias independientes de los límites de consulta (VR-01, VR-02, VR-03).
+2. Ajusté las aserciones de pruebas en punto flotante para utilizar representaciones estables y no ambiguas (`1.25`).
+
 - **Impact on Product**:
-  Cleaner separation of concerns, 100% test isolation for validation rules, and resilient test assertions.
+  Mayor separación de intereses, aislamiento total de pruebas para reglas de validación y aserciones de pruebas más robustas.
 
 ---
 
 ### Entry 4: CLI Implementation, Performance Verification & Delivery (Fases 4, 7, 8, 9: T-05, T-06)
+
 - **Stage**: Testing, CLI Presentation & Verification (`cli.py`, `test_cli.py`, `test_performance.py`)
 - **Context / Prompt**:
-  Implement the CLI interface, end-to-end integration tests, and automate verification of NFR-01 (10,000 records under 100ms).
+  Le pedí a la IA implementar la interfaz de línea de comandos (CLI), pruebas de integración de punta a punta (E2E) y automatizar la verificación del requerimiento NFR-01 (10,000 registros en menos de 100ms).
 - **AI Proposal**:
-  The AI proposed adding positional argument support in addition to explicit `-q/--query`, `-n/--name`, and `-e/--email` flags, along with a benchmark test generating 10,000 synthetic records. It suggested standard POSIX exit codes: 0 for success/no matches, 2 for validation errors, and 1 for file/runtime errors.
+  La IA propuso añadir soporte para argumentos posicionales además de los flags explícitos `-q/--query`, `-n/--name` y `-e/--email`, junto con una prueba de rendimiento que generara 10,000 registros sintéticos y códigos de salida POSIX estándar (0 para éxito/sin coincidencias, 2 para errores de validación y 1 para errores de archivo/runtime).
 - **Human Decision / Adjustment**:
-  Accepted the CLI design and exit code specification. Verified that `pytest` executed all 36 tests cleanly and that the 10,000-record benchmark executed in ~15-25ms (well under the 100ms threshold).
+  Acepté el diseño de la CLI y la especificación de códigos de salida. Verifiqué personalmente que `pytest` ejecutara con éxito las 36 pruebas y que el benchmark de 10,000 registros corriera en ~15-25ms (muy por debajo del umbral de 100ms).
 - **Impact on Product**:
-  Delivered a polished, user-friendly terminal experience with full tabular and JSON output options, verified by automated end-to-end and benchmark tests.
+  Se entregó una experiencia de terminal pulida y amigable, con opciones de salida tabular y en formato JSON, verificada mediante pruebas automatizadas de integración y rendimiento.

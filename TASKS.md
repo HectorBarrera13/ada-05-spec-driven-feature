@@ -14,7 +14,7 @@
 - Acceptance: `Customer` model holds id, name, email, phone, and is_active flag. `SearchResult` encapsulates matching items, total count, query, and elapsed time.
 - Verification: Run `pytest tests/test_models.py`.
 
-## T-03 Search logic
+## T-03 Search logic [COMPLETED]
 
 - Goal: Implement `CustomerRepository` interface, in-memory repository with JSON loader, and `CustomerSearchService` with case-insensitive and diacritic-insensitive partial search.
 - Files: `src/customer_search/repository.py`, `src/customer_search/service.py`, `tests/test_repository.py`, `tests/test_service.py`

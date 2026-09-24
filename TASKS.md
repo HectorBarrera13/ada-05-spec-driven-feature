@@ -28,7 +28,7 @@
 - Acceptance: Validation rejects empty queries, whitespace-only queries, and queries shorter than 2 characters with informative error messages.
 - Verification: Run `pytest tests/test_validation.py`.
 
-## T-05 Tests & CLI
+## T-05 Tests & CLI [COMPLETED]
 
 - Goal: Implement the CLI interface supporting `--query`, `--name`, `--email`, `--json`, and add integration tests and 10,000-record performance benchmark.
 - Files: `src/customer_search/cli.py`, `tests/test_cli.py`, `tests/test_performance.py`

@@ -1,6 +1,6 @@
 # Tasks
 
-## T-01 Project setup
+## T-01 Project setup [COMPLETED]
 
 - Goal: Configure project structure, package configuration (`pyproject.toml`), directory layout, sample data file, and base test harness.
 - Files: `pyproject.toml`, `src/customer_search/__init__.py`, `tests/__init__.py`, `data/customers.json`

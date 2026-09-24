@@ -1,0 +1,58 @@
+[
+  {
+    "id": "CUST-001",
+    "name": "Alice Johnson",
+    "email": "alice.johnson@example.com",
+    "phone": "+1-555-0101",
+    "is_active": true
+  },
+  {
+    "id": "CUST-002",
+    "name": "Bob Smith",
+    "email": "bob.smith@acme.org",
+    "phone": "+1-555-0102",
+    "is_active": true
+  },
+  {
+    "id": "CUST-003",
+    "name": "Carlos Gomez",
+    "email": "carlos.gomez@techcorp.io",
+    "phone": "+1-555-0103",
+    "is_active": false
+  },
+  {
+    "id": "CUST-004",
+    "name": "Diana Prince",
+    "email": "diana.prince@themyscira.gov",
+    "phone": "+1-555-0104",
+    "is_active": true
+  },
+  {
+    "id": "CUST-005",
+    "name": "José García",
+    "email": "jose.garcia@soluciones.mx",
+    "phone": "+52-999-1234567",
+    "is_active": true
+  },
+  {
+    "id": "CUST-006",
+    "name": "María Fernández",
+    "email": "maria.fernandez@empresa.es",
+    "phone": "+34-91-9876543",
+    "is_active": true
+  },
+  {
+    "id": "CUST-007",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+1-555-0107",
+    "is_active": true
+  },
+  {
+    "id": "CUST-008",
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com",
+    "phone": "+1-555-0108",
+    "is_active": true
+  }
+]

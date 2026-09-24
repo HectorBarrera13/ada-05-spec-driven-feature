@@ -21,7 +21,7 @@
 - Acceptance: Search logic satisfies SR-01 to SR-06, supporting name, email, and unified search, sorting results alphabetically by customer name.
 - Verification: Run `pytest tests/test_repository.py tests/test_service.py`.
 
-## T-04 Validation and errors
+## T-04 Validation and errors [COMPLETED]
 
 - Goal: Implement custom exception hierarchy (`CustomerSearchValidationError`, `CustomerDataError`) and validation logic per VR-01 to VR-03.
 - Files: `src/customer_search/exceptions.py`, `src/customer_search/validation.py`, `tests/test_validation.py`

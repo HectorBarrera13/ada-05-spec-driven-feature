@@ -9,34 +9,16 @@ from typing import Sequence
 from customer_search.exceptions import CustomerSearchValidationError
 from customer_search.models import Customer, SearchResult
 from customer_search.repository import CustomerRepository
+from customer_search.validation import validate_search_params, validate_search_term
 
 
 def normalize_text(text: str) -> str:
     """Normalize text using Unicode NFKD, stripping diacritics and converting to lowercase."""
     if not text:
         return ""
-    # Normalize Unicode composition to decompose accents
     decomposed = unicodedata.normalize("NFKD", text)
-    # Strip diacritical marks (category 'Mn')
     stripped = "".join(char for char in decomposed if unicodedata.category(char) != "Mn")
     return stripped.strip().casefold()
-
-
-def validate_search_term(term: str | None, field_name: str = "query") -> str:
-    """Validate a search term against VR-01, VR-02, and VR-03 rules."""
-    if term is None or len(term) == 0:
-        raise CustomerSearchValidationError(f"Search {field_name} must not be empty.")
-
-    trimmed = term.strip()
-    if not trimmed:
-        raise CustomerSearchValidationError(f"Search {field_name} must not consist solely of whitespace.")
-
-    if len(trimmed) < 2:
-        raise CustomerSearchValidationError(
-            f"Search {field_name} '{trimmed}' is too short. Minimum query length is 2 characters."
-        )
-
-    return trimmed
 
 
 class CustomerSearchService:

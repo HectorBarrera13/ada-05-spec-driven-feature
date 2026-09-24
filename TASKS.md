@@ -7,7 +7,7 @@
 - Acceptance: Package `customer_search` is importable, initial data fixture exists, and pytest executes successfully.
 - Verification: Run `pytest` to confirm environment and harness readiness.
 
-## T-02 Domain model
+## T-02 Domain model [COMPLETED]
 
 - Goal: Implement the `Customer` entity and `SearchResult` value object with strong typing, immutability, and serialization.
 - Files: `src/customer_search/models.py`, `tests/test_models.py`

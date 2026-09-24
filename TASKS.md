@@ -35,7 +35,7 @@
 - Acceptance: CLI delivers tabular and JSON outputs with appropriate exit codes (0 for success, 2 for validation error), and benchmark executes in under 100ms.
 - Verification: Run `pytest` across all tests and manually verify CLI invocations.
 
-## T-06 Documentation
+## T-06 Documentation [COMPLETED]
 
 - Goal: Create comprehensive documentation, requirements traceability matrix, agent execution report, AI usage log, and project README with reflection answers.
 - Files: `docs/traceability.md`, `results/agent-report.md`, `AI_USAGE_LOG.md`, `README.md`
